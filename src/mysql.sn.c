@@ -363,12 +363,7 @@ RtMyConn *sn_my_conn_connect(char *conn_str)
         exit(1);
     }
 
-    RtMyConn *c = (RtMyConn *)calloc(1, sizeof(RtMyConn));
-    if (!c) {
-        fprintf(stderr, "MyConn.connect: allocation failed\n");
-        mysql_close(conn);
-        exit(1);
-    }
+    RtMyConn *c = __sn__MyConn__new();
     c->conn_ptr = (long long)(uintptr_t)conn;
     return c;
 }
@@ -430,13 +425,7 @@ RtMyStmt *sn_my_conn_prepare(RtMyConn *c, char *sql)
         }
     }
 
-    RtMyStmt *s = (RtMyStmt *)calloc(1, sizeof(RtMyStmt));
-    if (!s) {
-        fprintf(stderr, "MyConn.prepare: allocation failed\n");
-        free(params);
-        mysql_stmt_close(stmt);
-        exit(1);
-    }
+    RtMyStmt *s = __sn__MyStmt__new();
     s->conn_ptr    = (long long)(uintptr_t)CONN_PTR(c);
     s->stmt_ptr    = (long long)(uintptr_t)stmt;
     s->params      = (long long)(uintptr_t)params;
