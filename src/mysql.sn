@@ -3,46 +3,46 @@
 # ==============================================================================
 #
 # Usage:
-#   import "sindarin-pkg-mysql/src/mysql"
+# import "sindarin-pkg-mysql/src/mysql"
 #
-#   var conn: MyConn = MyConn.connect("host=localhost port=3306 user=root password=secret dbname=mydb")
+# var conn: MyConn = MyConn.connect("host=localhost port=3306 user=root password=secret dbname=mydb")
 #
-#   conn.exec("CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), age INT)")
-#   conn.exec("INSERT INTO users (name, age) VALUES ('Alice', 30)")
+# conn.exec("CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(100), age INT)")
+# conn.exec("INSERT INTO users (name, age) VALUES ('Alice', 30)")
 #
-#   var rows: MyRow[] = conn.query("SELECT * FROM users ORDER BY id")
-#   for i: int = 0; i < rows.length; i += 1 =>
-#       print(rows[i].getString("name"))
-#       print(rows[i].getInt("age"))
+# var rows: MyRow[] = conn.query("SELECT * FROM users ORDER BY id")
+# for i: int = 0; i < rows.length; i += 1 =>
+# print(rows[i].getString("name"))
+# print(rows[i].getInt("age"))
 #
-#   var stmt: MyStmt = conn.prepare("INSERT INTO users (name, age) VALUES (?, ?)")
-#   stmt.bindString(1, "Bob").bindInt(2, 25).exec()
-#   stmt.dispose()
-#   conn.dispose()
+# var stmt: MyStmt = conn.prepare("INSERT INTO users (name, age) VALUES (?, ?)")
+# stmt.bindString(1, "Bob").bindInt(2, 25).exec()
+# stmt.dispose()
+# conn.dispose()
 #
 # Methods:
-#   MyConn.connect(connStr)                       Connect to MySQL/MariaDB
-#   conn.exec(sql)                                Execute SQL with no results
-#   conn.query(sql): MyRow[]                      Execute SELECT, return rows
-#   conn.prepare(sql): MyStmt                     Create a prepared statement (use ? placeholders)
-#   conn.lastError(): str                         Last error message from the server
-#   conn.dispose()                                Close connection
+# MyConn.connect(connStr)                       Connect to MySQL/MariaDB
+# conn.exec(sql)                                Execute SQL with no results
+# conn.query(sql): MyRow[]                      Execute SELECT, return rows
+# conn.prepare(sql): MyStmt                     Create a prepared statement (use ? placeholders)
+# conn.lastError(): str                         Last error message from the server
+# conn.dispose()                                Close connection
 #
-#   row.getString(col): str                       Column value as string ("" for NULL)
-#   row.getInt(col): int                          Column value as integer (0 for NULL)
-#   row.getFloat(col): double                     Column value as float (0.0 for NULL)
-#   row.isNull(col): bool                         True if column is SQL NULL
-#   row.columnCount(): int                        Number of columns in this row
-#   row.columnName(index): str                    Column name at zero-based index
+# row.getString(col): str                       Column value as string ("" for NULL)
+# row.getInt(col): int                          Column value as integer (0 for NULL)
+# row.getFloat(col): double                     Column value as float (0.0 for NULL)
+# row.isNull(col): bool                         True if column is SQL NULL
+# row.columnCount(): int                        Number of columns in this row
+# row.columnName(index): str                    Column name at zero-based index
 #
-#   stmt.bindString(index, value): MyStmt         Bind string to ? parameter (1-based)
-#   stmt.bindInt(index, value): MyStmt            Bind integer to ? parameter (1-based)
-#   stmt.bindFloat(index, value): MyStmt          Bind float to ? parameter (1-based)
-#   stmt.bindNull(index): MyStmt                  Bind SQL NULL to ? parameter (1-based)
-#   stmt.exec()                                   Execute with no results
-#   stmt.query(): MyRow[]                         Execute and return rows
-#   stmt.reset()                                  Clear all bindings for re-use
-#   stmt.dispose()                                Free statement resources
+# stmt.bindString(index, value): MyStmt         Bind string to ? parameter (1-based)
+# stmt.bindInt(index, value): MyStmt            Bind integer to ? parameter (1-based)
+# stmt.bindFloat(index, value): MyStmt          Bind float to ? parameter (1-based)
+# stmt.bindNull(index): MyStmt                  Bind SQL NULL to ? parameter (1-based)
+# stmt.exec()                                   Execute with no results
+# stmt.query(): MyRow[]                         Execute and return rows
+# stmt.reset()                                  Clear all bindings for re-use
+# stmt.dispose()                                Free statement resources
 #
 # ==============================================================================
 
@@ -61,38 +61,38 @@
 
 @alias "RtMyRow"
 native struct MyRow =>
-    @alias "col_names"
-    _colNames: long
-    @alias "col_values"
-    _colValues: long
-    @alias "col_nulls"
-    _colNulls: long
-    @alias "col_count"
-    _colCount: int
+  @alias "col_names"
+  _colNames: long
+  @alias "col_values"
+  _colValues: long
+  @alias "col_nulls"
+  _colNulls: long
+  @alias "col_count"
+  _colCount: int
 
-    # Get string value for a named column (returns "" for SQL NULL)
-    @alias "sn_my_row_get_string"
-    native fn getString(col: str): str
+  # Get string value for a named column (returns "" for SQL NULL)
+  @alias "sn_my_row_get_string"
+  native fn getString(col: str): str
 
-    # Get integer value for a named column (returns 0 for SQL NULL)
-    @alias "sn_my_row_get_int"
-    native fn getInt(col: str): int
+  # Get integer value for a named column (returns 0 for SQL NULL)
+  @alias "sn_my_row_get_int"
+  native fn getInt(col: str): int
 
-    # Get float value for a named column (returns 0.0 for SQL NULL)
-    @alias "sn_my_row_get_float"
-    native fn getFloat(col: str): double
+  # Get float value for a named column (returns 0.0 for SQL NULL)
+  @alias "sn_my_row_get_float"
+  native fn getFloat(col: str): double
 
-    # Check if a named column value is SQL NULL
-    @alias "sn_my_row_is_null"
-    native fn isNull(col: str): bool
+  # Check if a named column value is SQL NULL
+  @alias "sn_my_row_is_null"
+  native fn isNull(col: str): bool
 
-    # Number of columns in this row
-    @alias "sn_my_row_column_count"
-    native fn columnCount(): int
+  # Number of columns in this row
+  @alias "sn_my_row_column_count"
+  native fn columnCount(): int
 
-    # Column name at the given zero-based index
-    @alias "sn_my_row_column_name"
-    native fn columnName(index: int): str
+  # Column name at the given zero-based index
+  @alias "sn_my_row_column_name"
+  native fn columnName(index: int): str
 
 # ==============================================================================
 # MyStmt — prepared statement with parameter binding (use ? placeholders)
@@ -100,50 +100,50 @@ native struct MyRow =>
 
 @alias "RtMyStmt"
 native struct MyStmt as ref =>
-    @alias "conn_ptr"
-    _conn: long
-    @alias "stmt_ptr"
-    _stmt: long
-    @alias "params"
-    _params: long
-    @alias "param_count"
-    _paramCount: int
+  @alias "conn_ptr"
+  _conn: long
+  @alias "stmt_ptr"
+  _stmt: long
+  @alias "params"
+  _params: long
+  @alias "param_count"
+  _paramCount: int
 
-    # Bind a string value to the given 1-based parameter index
-    fn bindString(index: int, value: str): MyStmt =>
-        sn_my_stmt_bind_string(self, index, value)
-        return self
+  # Bind a string value to the given 1-based parameter index
+  fn bindString(index: int, value: str): MyStmt =>
+    sn_my_stmt_bind_string(self, index, value)
+    return self
 
-    # Bind an integer value to the given 1-based parameter index
-    fn bindInt(index: int, value: int): MyStmt =>
-        sn_my_stmt_bind_int(self, index, value)
-        return self
+  # Bind an integer value to the given 1-based parameter index
+  fn bindInt(index: int, value: int): MyStmt =>
+    sn_my_stmt_bind_int(self, index, value)
+    return self
 
-    # Bind a float value to the given 1-based parameter index
-    fn bindFloat(index: int, value: double): MyStmt =>
-        sn_my_stmt_bind_float(self, index, value)
-        return self
+  # Bind a float value to the given 1-based parameter index
+  fn bindFloat(index: int, value: double): MyStmt =>
+    sn_my_stmt_bind_float(self, index, value)
+    return self
 
-    # Bind SQL NULL to the given 1-based parameter index
-    fn bindNull(index: int): MyStmt =>
-        sn_my_stmt_bind_null(self, index)
-        return self
+  # Bind SQL NULL to the given 1-based parameter index
+  fn bindNull(index: int): MyStmt =>
+    sn_my_stmt_bind_null(self, index)
+    return self
 
-    # Execute statement with no results (INSERT, UPDATE, DELETE)
-    @alias "sn_my_stmt_exec"
-    native fn exec(): void
+  # Execute statement with no results (INSERT, UPDATE, DELETE)
+  @alias "sn_my_stmt_exec"
+  native fn exec(): void
 
-    # Execute and return all result rows
-    fn query(): MyRow[] =>
-        return sn_my_stmt_query(self)
+  # Execute and return all result rows
+  fn query(): MyRow[] =>
+    return sn_my_stmt_query(self)
 
-    # Clear all bindings for re-use
-    @alias "sn_my_stmt_reset"
-    native fn reset(): void
+  # Clear all bindings for re-use
+  @alias "sn_my_stmt_reset"
+  native fn reset(): void
 
-    # Free statement resources
-    @alias "sn_my_stmt_dispose"
-    native fn dispose(): void
+  # Free statement resources
+  @alias "sn_my_stmt_dispose"
+  native fn dispose(): void
 
 # ==============================================================================
 # MyConn — database connection
@@ -151,33 +151,33 @@ native struct MyStmt as ref =>
 
 @alias "RtMyConn"
 native struct MyConn as ref =>
-    @alias "conn_ptr"
-    _conn: long
+  @alias "conn_ptr"
+  _conn: long
 
-    # Connect to a MySQL/MariaDB server
-    # connStr format: "host=localhost port=3306 user=root password=secret dbname=mydb"
-    static fn connect(connStr: str): MyConn =>
-        return sn_my_conn_connect(connStr)
+  # Connect to a MySQL/MariaDB server
+  # connStr format: "host=localhost port=3306 user=root password=secret dbname=mydb"
+  static fn connect(connStr: str): MyConn =>
+    return sn_my_conn_connect(connStr)
 
-    # Execute SQL with no result rows (CREATE, DROP, INSERT, UPDATE, DELETE)
-    @alias "sn_my_conn_exec"
-    native fn exec(sql: str): void
+  # Execute SQL with no result rows (CREATE, DROP, INSERT, UPDATE, DELETE)
+  @alias "sn_my_conn_exec"
+  native fn exec(sql: str): void
 
-    # Execute a SELECT query and return all rows
-    fn query(sql: str): MyRow[] =>
-        return sn_my_conn_query(self, sql)
+  # Execute a SELECT query and return all rows
+  fn query(sql: str): MyRow[] =>
+    return sn_my_conn_query(self, sql)
 
-    # Create a prepared statement (use ? as parameter placeholders)
-    fn prepare(sql: str): MyStmt =>
-        return sn_my_conn_prepare(self, sql)
+  # Create a prepared statement (use ? as parameter placeholders)
+  fn prepare(sql: str): MyStmt =>
+    return sn_my_conn_prepare(self, sql)
 
-    # Last error message from the server
-    @alias "sn_my_conn_last_error"
-    native fn lastError(): str
+  # Last error message from the server
+  @alias "sn_my_conn_last_error"
+  native fn lastError(): str
 
-    # Close the connection and free resources
-    @alias "sn_my_conn_dispose"
-    native fn dispose(): void
+  # Close the connection and free resources
+  @alias "sn_my_conn_dispose"
+  native fn dispose(): void
 
 # ==============================================================================
 # Runtime Function Declarations
