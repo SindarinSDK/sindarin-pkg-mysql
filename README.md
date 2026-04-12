@@ -224,4 +224,16 @@ Tests require a running MySQL or MariaDB server. Set the following environment v
 
 ## License
 
-MIT License
+This package is licensed under the [MIT License](LICENSE).
+
+### Third-Party Library Notice
+
+This package statically links [MariaDB Connector/C](https://github.com/mariadb-corporation/mariadb-connector-c) (`libmariadb`), which is licensed under **LGPL 2.1 or later**. Under the terms of the LGPL:
+
+- You may use this package in proprietary applications.
+- If you modify the MariaDB Connector/C library itself, you must make the modified source available.
+- Static linking requires that you provide object files sufficient for relinking on request (LGPL 2.1, Section 6).
+
+The unmodified MariaDB Connector/C source code is available at: https://github.com/mariadb-corporation/mariadb-connector-c
+
+See [sindarin-pkg-libs/THIRD-PARTY.md](https://github.com/SindarinSDK/sindarin-pkg-libs/blob/main/THIRD-PARTY.md) for the complete list of bundled native library licenses.
