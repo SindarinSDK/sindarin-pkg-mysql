@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "sindarin-mysql",
+  "version": "1.0.0",
+  "description": "MariaDB client library for Sindarin",
+  "dependencies": [
+    {
+      "name": "libmariadb",
+      "default-features": false,
+      "features": ["openssl"]
+    },
+    "openssl"
+  ]
+}
