@@ -8,51 +8,5 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-
-    services:
-      mysql:
-        image: mysql:8.0
-        env:
-          MYSQL_ROOT_PASSWORD: rootpass
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpass
-        ports:
-          - 3306:3306
-        options: >-
-          --health-cmd "mysqladmin ping -h 127.0.0.1 -u root --password=rootpass --silent"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Prerequisites
-        uses: SindarinSDK/sindarin-pipelines/.github/actions/setup-prereqs@main
-
-      - name: Install Sindarin
-        uses: SindarinSDK/sindarin-pipelines/.github/actions/install-sindarin@main
-
-      - name: Install dependencies
-        uses: SindarinSDK/sindarin-pipelines/.github/actions/install-deps@main
-        with:
-          github-token: ${{ github.token }}
-
-      - name: Run tests
-        shell: bash
-        env:
-          MYSQL_HOST: 127.0.0.1
-          MYSQL_PORT: 3306
-          MYSQL_DATABASE: testdb
-          MYSQL_USER: testuser
-          MYSQL_PASSWORD: testpass
-        run: make test
-
-      - name: Diagnose compile errors
-        if: failure()
-        uses: SindarinSDK/sindarin-pipelines/.github/actions/diagnose-pkg@main
+  sindarin-pkg-test:
+    uses: SindarinSDK/sindarin-pipelines/.github/workflows/sindarin-pkg-test.yml@main
