@@ -8,6 +8,7 @@
 ifeq ($(OS),Windows_NT)
     PLATFORM := windows
     EXE_EXT  := .exe
+    PLATFORM_LDFLAGS := -lshlwapi -lsecur32 -lcrypt32 -ladvapi32
 else
     UNAME_S := $(shell uname -s 2>/dev/null || echo Unknown)
     ifeq ($(UNAME_S),Darwin)
@@ -16,6 +17,7 @@ else
         PLATFORM := linux
     endif
     EXE_EXT :=
+    PLATFORM_LDFLAGS :=
 endif
 
 BIN_DIR      := bin
@@ -23,6 +25,14 @@ SN           ?= sn
 SRC_SOURCES  := $(wildcard src/*.sn) $(wildcard src/*.sn.c)
 RUN_TESTS_SN := .sn/sindarin-pkg-test/src/execute.sn
 RUN_TESTS    := $(BIN_DIR)/run_tests$(EXE_EXT)
+
+export MYSQL_HOST     ?= 127.0.0.1
+export MYSQL_PORT     ?= 3306
+export MYSQL_DATABASE ?= testdb
+export MYSQL_USER     ?= testuser
+export MYSQL_PASSWORD ?= testpass
+export SN_CFLAGS      := -I$(CURDIR)/libs/$(PLATFORM)/include $(SN_CFLAGS)
+export SN_LDFLAGS     := -L$(CURDIR)/libs/$(PLATFORM)/lib $(PLATFORM_LDFLAGS) $(SN_LDFLAGS)
 
 setup:
 	@$(SN) --install
@@ -34,10 +44,7 @@ endif
 	@docker compose up -d --wait
 
 test: setup $(RUN_TESTS)
-	@MYSQL_HOST=127.0.0.1 MYSQL_PORT=3306 MYSQL_DATABASE=testdb MYSQL_USER=testuser MYSQL_PASSWORD=testpass \
-	 SN_CFLAGS="-I$(CURDIR)/libs/$(PLATFORM)/include $(SN_CFLAGS)" \
-	 SN_LDFLAGS="-L$(CURDIR)/libs/$(PLATFORM)/lib $(SN_LDFLAGS)" \
-	 $(RUN_TESTS) --verbose
+	@$(RUN_TESTS) --verbose
 
 teardown:
 	@docker compose down
@@ -46,9 +53,7 @@ $(BIN_DIR):
 	@mkdir -p $(BIN_DIR)
 
 $(RUN_TESTS): $(RUN_TESTS_SN) $(SRC_SOURCES) | $(BIN_DIR)
-	@SN_CFLAGS="-I$(CURDIR)/libs/$(PLATFORM)/include $(SN_CFLAGS)" \
-	 SN_LDFLAGS="-L$(CURDIR)/libs/$(PLATFORM)/lib $(SN_LDFLAGS)" \
-	 $(SN) $(RUN_TESTS_SN) -o $@ -l 1
+	@$(SN) $(RUN_TESTS_SN) -o $@ -l 1
 
 VCPKG_ROOT ?= $(CURDIR)/vcpkg
 TRIPLET    ?= $(if $(filter windows,$(PLATFORM)),x64-mingw-static,$(if $(filter aarch64,$(shell uname -m 2>/dev/null)),arm64,x64)-$(if $(filter darwin,$(PLATFORM)),osx,linux))
